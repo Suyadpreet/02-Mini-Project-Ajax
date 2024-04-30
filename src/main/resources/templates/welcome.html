@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-2.1.1.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function()
+    			{
+    				$.ajax(
+    						{
+    							url : 'county',
+    							cache : false,
+    							dataType : 'json',
+    							success : function(result)
+    							{
+    								$.each(result,function(key,value)
+    										{
+    											$('<option>').val(key).text(value).appendTo("#country");
+    										});
+    							}
+    						});
+    			});
+    	$(document).on("change","#country",function()
+    			{
+    				$("#state").find('option').remove();
+    				$('<option>').val("").text("-select State-").appendTo("#state");
+    				$("#city").find('option').remove();
+    				$('<option>').val("").text("-Select City-").appendTo("#city");
+    				var selectedcountryId = $("#country").val();
+    				$.ajax(
+    						{
+    							url : "states",
+    							data :
+    								{
+    									countryId : selectedcountryId
+    								},
+    								cache : false,
+    								dataType : 'json',
+    								success : function(result)
+        							{
+        								$.each(result,function(key,value)
+        										{
+        											$('<option>').val(key).text(value).appendTo("#state");
+        										});
+        							}
+    						});
+    			});
+    	$(document).on("change","#state","#country",function()
+    			{
+    				$("#city").find('option').remove();
+    				$('<option>').val("").text("-Select City-").appendTo("#city");
+    				var selectedstateId = $("#state").val();
+    				var selectedcountryId = $("#country").val();
+    				$.ajax(
+    						{
+    							url : "cities",
+    							data :
+    								{
+    									stateId : selectedstateId,
+    									countryId :selectedcountryId
+    								},
+    								cache : false,
+    								dataType : 'json',
+    								success : function(result)
+        							{
+        								$.each(result,function(key,value)
+        										{
+        											$('<option>').val(key).text(value).appendTo("#city");
+        										});
+        							}
+    						});
+    			});
+    	$(document).ready(function()
+    			{
+    				$("#email").blur(function()
+    					{
+    					var enteredEmail = $("#email").val();
+        				$.ajax(
+        						{
+        							url : "validateEmail",
+        							data : 
+        								{
+        									Email :  enteredEmail,
+        								},
+        								success : function(result)
+        								{
+        									if(result == 'Duplicate')
+        										{
+        											$("#emailMsg").html("Email already registered.!!");
+        											$("#email").focus();
+        											$("#createAccBtn").prop("disabled",true);
+        										}
+        										else
+        										{
+        											$("#emailMsg").html("Email is Available");
+        											$("#createAccBtn").prop("disabled",false);
+        										}
+        								}
+        						})
+    					});
+    			});
+    </script>
+  </head>
+  <body>
+  <h1>Countries States cities loading using Ajax</h1>
+    <table >	
+		<tr>
+			<td><b>Select Country :</b></td>
+			<td><select id = "country"><option value = "">-Select Country-</select></td>
+		</tr>
+		<tr>
+			<td><b>Select State :</b></td>
+			<td><select id = "state"><option value = "">-Select state-</select></td>
+		</tr>
+		<tr>
+			<td><b>Select City :</b></td>
+			<td><select id = "city"><option value = "">-Select City-</select></td>
+		</tr>
+	</table>
+	
+	<form th:action="@{/register}"  method = "get">
+	<br><br>
+		<p>Email : </p>
+		<div>
+			<input type = "email" id = "email" placeholder = "Email"/>
+			<span id = "emailMsg" style = "color : red"></span>
+		</div>
+		<input type = "text" name = "gill"/>
+		<br>
+		<input type = "submit" value = "register" id = "createAccBtn">				
+    </form>
+</html>

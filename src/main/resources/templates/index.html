@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-2.1.1.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function()
+    			{
+ 					$("#name").keyup(function()		
+ 					{
+ 						var enteredName = $("#name").val();
+ 						$.ajax(
+ 								{
+ 									url : "/idx",
+ 									data : 
+ 									{
+ 										names : enteredName	
+ 									},
+ 									success : function(responseText)
+ 									{
+ 										$("#responseDiv").empty();
+ 										$("#responseDiv").append(responseText);
+ 									}
+ 								});
+ 					}) ;  		
+    			});
+    </script>
+  </head>
+  <body>
+    <div id = "gill" class = "container mt-5" >
+    	<p th:text = "${msg}" class = "text-success"></p>
+		<h3>Hello Welcome to Ajax world</h3>
+		<h3>Spring Boot Application with Ajax</h3><br><br>
+		Enter Name : 
+    	<input type = "text" name = "name" id = "name"></input>
+    	<br>
+    </div>
+    <div id = "responseDiv" class = "container mt-5"></div>
+  </body>
+</html>
